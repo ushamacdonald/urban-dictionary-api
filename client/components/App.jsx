@@ -1,42 +1,47 @@
 import React from 'react'
-import {getDefinition} from '../api'
+import {getDefinition, getGif} from '../api'
 
 export default class App extends React.Component {
-  constructor (props) {
+  constructor(props) {
     super(props)
     this.state = {
-      define: {list:[]},
-      search: 'annah'
+      define: {
+        list: []
+      },
+      search: 'annah',
+      gif: {data:[]}
     }
   }
 
   componentDidMount() {
     this.newSearch()
+    getGif((gif) => {
+      console.log(gif.data);
+      this.setState({gif})
+    })
   }
 
   updateSearch(event) {
-    this.setState(
-      {search: event.target.value}
-    )
+    this.setState({search: event.target.value})
     console.log(this.state);
   }
 
   newSearch(e) {
-    if (e) e.preventDefault()
+    if (e)
+      e.preventDefault()
     getDefinition(this.state.search, (define) => {
-      console.log(define);
-      this.setState(
-        {define}
-      )
+      this.setState({define})
     })
   }
 
   render() {
+    console.log(this.state);
     return (
       <div>
+        <img src={this.state.gif.data.image_url} />
         <form onSubmit={this.newSearch.bind(this)}>
           <input type="text" name='search' value={this.state.search} onChange={this.updateSearch.bind(this)}></input>
-          <input type="submit" />
+          <input type="submit" value="search"/>
         </form>
         {this.state.define.list.map((list) => {
           return <div key={list.defid}>
